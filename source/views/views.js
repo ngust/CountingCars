@@ -45,9 +45,9 @@ enyo.kind({
 			{kind: "onyx.Button", content: "Tap me", ontap: "helloWorldTap"}
 		]},
 		{kind: "current"},
-		{kind: "viewTotals"},
 		{kind: "enyo.Scroller", fit: true, components: [
-			{name: "main", classes: "nice-padding", allowHtml: true}
+			{name: "main", classes: "nice-padding", allowHtml: true},
+			{kind: "viewTotals"}
 		]},
 	
 	],
@@ -85,17 +85,9 @@ enyo.kind({
 			}
 		count += 1;
 		carTotals.set("Total", count);
-		// this.$.results.set('count', count);
 		this.$.current.set('type', type);
-
-		// this.$.total.setContent('Total vehicles = ' + count);
-		// this.$.totCars.setContent('Total cars = ' + countCar);
-		// this.$.totPickups.setContent('Total pickups = ' + countPickup);
-		// this.$.totDT.setContent('Total delivery trucks = ' + countDTruck);
-		// this.$.totRV.setContent('Total RVs = ' + countRV);
-
-
 		color = this.$.ColorCar.getSelected().getContent();
+
 		switch (color)
 			{
 		    case "black":
@@ -134,15 +126,15 @@ enyo.kind({
       color: 'none',
       type: 'none',
       components: [
-          {kind: "enyo.Control", name: "forecastLabel", content: "Hats"},
+          {kind: "enyo.Control", name: "currentLabel", content: "Hats"},
 	      ],
       bindings: [
-          {from: 'forecast', to: '$.forecastLabel.content'}
+          {from: 'current', to: '$.currentLabel.content'}
       ],
       computed: [
-          { method: 'forecast', path: ['color', 'type'] }    // 'forecast' method depends on properties in list
+          { method: 'current', path: ['color', 'type'] }    // 'current' method depends on properties in list
       ],
-      forecast: function () {
+      current: function () {
           return 'You picked a ' + this.get('type') + ' that is ' + this.get('color') + " in color!"
       }
     });

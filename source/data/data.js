@@ -15,6 +15,3 @@
         Silver: 0,
         Blue: 0
     });
-
-
-// this.$.ViewTotals.set("totModel", carTotals);
