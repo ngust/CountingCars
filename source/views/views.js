@@ -23,36 +23,7 @@ enyo.kind({
 	fit: true,
 	components:[
 		{kind: "onyx.Toolbar", content: "Lets count cars!"},
-		{kind: "current"},
-		{kind: "enyo.Scroller", fit: true, components: [
-			{tag: "div", 
-			 name: "results", 
-			 count: 0,
-			 components: [
-			 	{tag: "h2", name: "total", content: "You have not picked yet"},
-				{kind: "enyo.Control", name: "totCars", content: "Nothing Yet"},
-				{kind: "enyo.Control", name: "totPickups", content: "Nothing Yet"},
-				{kind: "enyo.Control", name: "totDT", content: "Nothing Yet"},
-				{kind: "enyo.Control", name: "totRV", content: "Nothing Yet"},
-
-				{kind: "enyo.Control", name: "totBlack", content: "Nothing Yet"},
-				{kind: "enyo.Control", name: "totSilver", content: "Nothing Yet"},
-				{kind: "enyo.Control", name: "totWhite", content: "Nothing Yet"},
-				{kind: "enyo.Control", name: "totBlue", content: "Nothing Yet"}
-			],
-			countChanged: function (oldValue) {    // Called when count changes
-            // $.totCars.setContent('Total cars =' + count);
-            console.log("count changed to " + count)
-        },
-			 bindings: [
-            {from: 'this.$.results.count', to: '$.totCars.content', transform: function (val) {
-                return 'Total cars =' + val;
-            }}
-          ]
-      },
-			{name: "main", classes: "nice-padding", allowHtml: true}
-		]},
-		{kind: "onyx.Toolbar", components: [
+			{kind: "onyx.Toolbar", components: [
 			{ kind: "onyx.PickerDecorator", components: [
 			            {style: "min-width: 150px;"},
 			            { name: "TypeCar", kind: "onyx.Picker", components: [
@@ -72,38 +43,56 @@ enyo.kind({
 			            ]}
 			        ]},
 			{kind: "onyx.Button", content: "Tap me", ontap: "helloWorldTap"}
-		]}
+		]},
+		{kind: "current"},
+		{kind: "viewTotals"},
+		{kind: "enyo.Scroller", fit: true, components: [
+			{name: "main", classes: "nice-padding", allowHtml: true}
+		]},
+	
 	],
+	create: enyo.inherit(function (sup) {
+        return function () {
+            sup.apply(this, arguments);
+            this.$.viewTotals.set("totModel", carTotals);
+        	};
+       }),
 	helloWorldTap: function(inSender, inEvent) {
 		this.$.main.setContent("");
 		this.$.main.addContent("<br/>The button was tapped.<br/>");
 		type = this.$.TypeCar.getSelected().getContent();
+
 		switch (type)
 			{
 		    case "car":
 		   			countCar += 1;
+		   			carTotals.set("Car", countCar);
 		   			break;
 		   	case "pickup":
 		   			countPickup += 1;
+		   			carTotals.set("Pickup", countPickup);
 		   			break;
 		   	case "delivery truck":
 		   			countDTruck += 1;
+		   			carTotals.set("DTruck", countDTruck);
 		   			break;
 		   	case "RV":
 		   			countRV += 1;
+		   			carTotals.set("RV", countRV);
 		   			break;
 		    default: 
 		        alert('No Type Selected');
 			}
 		count += 1;
-		this.$.results.set('count', count);
+		carTotals.set("Total", count);
+		// this.$.results.set('count', count);
 		this.$.current.set('type', type);
 
-		this.$.total.setContent('Total vehicles = ' + count);
-		this.$.totCars.setContent('Total cars = ' + countCar);
-		this.$.totPickups.setContent('Total pickups = ' + countPickup);
-		this.$.totDT.setContent('Total delivery trucks = ' + countDTruck);
-		this.$.totRV.setContent('Total RVs = ' + countRV);
+		// this.$.total.setContent('Total vehicles = ' + count);
+		// this.$.totCars.setContent('Total cars = ' + countCar);
+		// this.$.totPickups.setContent('Total pickups = ' + countPickup);
+		// this.$.totDT.setContent('Total delivery trucks = ' + countDTruck);
+		// this.$.totRV.setContent('Total RVs = ' + countRV);
 
 
 		color = this.$.ColorCar.getSelected().getContent();
@@ -111,33 +100,32 @@ enyo.kind({
 			{
 		    case "black":
 		   			countBK += 1;
+		   			carTotals.set("Black", countBK);
 		   			break;
 		   	case "white":
 		   			countWT += 1;
+		   			carTotals.set("White", countWT);
 		   			break;
 		   	case "silver":
 		   			countSL += 1;
+		   			carTotals.set("Silver", countSL);
 		   			break;
 		   	case "blue":
 		   			countBL += 1;
+		   			carTotals.set("Blue", countBL);
 		   			break;
 		    default: 
 		        alert('No Type Selected');
 			}
 			this.$.current.set('color', color);
 
-			this.$.totBlack.setContent('Total Black =' + countBK);
-			this.$.totSilver.setContent('Total Silver =' + countSL);
-			this.$.totWhite.setContent('Total White =' + countWT);
-			this.$.totBlue.setContent('Total Blue =' + countBL);
-
 			// logging stuff
 		this.$.main.addContent(color + "<br/>");
 		this.$.main.addContent(type + "<br/>");
 		console.log(count);
-		console.log(this.$.results.count);
 		console.log("current colour kind is " + this.$.current.color);
-		console.log(this.$.totCars.content);
+		console.log("model total = " + carTotals.get("Total"));
+		console.log("model pickup = " + carTotals.get("Pickup"));
 	}
 });
 
@@ -147,17 +135,6 @@ enyo.kind({
       type: 'none',
       components: [
           {kind: "enyo.Control", name: "forecastLabel", content: "Hats"},
-          // To be used in future, refactoring
-	    //     {kind: "enyo.Control", name: "total", content: "Nada"},
-					// {kind: "enyo.Control", name: "totCars", content: "Nothing Yet"},
-					// {kind: "enyo.Control", name: "totPickups", content: "Nothing Yet"},
-					// {kind: "enyo.Control", name: "totDT", content: "Nothing Yet"},
-					// {kind: "enyo.Control", name: "totRV", content: "Nothing Yet"},
-
-					// {kind: "enyo.Control", name: "totBlack", content: "Nothing Yet"},
-					// {kind: "enyo.Control", name: "totSilver", content: "Nothing Yet"},
-					// {kind: "enyo.Control", name: "totWhite", content: "Nothing Yet"},
-					// {kind: "enyo.Control", name: "totBlue", content: "Nothing Yet"}
 	      ],
       bindings: [
           {from: 'forecast', to: '$.forecastLabel.content'}
@@ -169,3 +146,31 @@ enyo.kind({
           return 'You picked a ' + this.get('type') + ' that is ' + this.get('color') + " in color!"
       }
     });
+
+enyo.kind({
+    name: "viewTotals",
+    totModel: null,
+    components: [
+	        {tag: "h5", content: "Total Vehicles"},{kind: "enyo.Control", name: "Total", content: "Nothing Yet"},
+					{tag: "h5", content: "Total Cars"},{kind: "enyo.Control", name: "Car", content: "Nothing Yet"},
+					{tag: "h5", content: "Total Pickups"},{kind: "enyo.Control", name: "Pickup", content: "Nothing Yet"},
+					{tag: "h5", content: "Total Delivery Trucks"},{kind: "enyo.Control", name: "DTruck", content: "Nothing Yet"},
+					{tag: "h5", content: "Total RVs"},{kind: "enyo.Control", name: "RV", content: "Nothing Yet"},
+					{tag: "h5", content: "Total Black"},{kind: "enyo.Control", name: "Black", content: "Nothing Yet"},
+					{tag: "h5", content: "Total Silver"},{kind: "enyo.Control", name: "Silver", content: "Nothing Yet"},
+					{tag: "h5", content: "Total White"},{kind: "enyo.Control", name: "White", content: "Nothing Yet"},
+					{tag: "h5", content: "Total Blue"},{kind: "enyo.Control", name: "Blue", content: "Nothing Yet"}
+    ],
+    bindings: [
+        {from: "totModel.Total", to: "$.Total.content"},
+        {from: "totModel.Car", to: "$.Car.content"},
+        {from: "totModel.Pickup", to: "$.Pickup.content"},
+        {from: "totModel.DTruck", to: "$.DTruck.content"},
+        {from: "totModel.RV", to: "$.RV.content"},
+        {from: "totModel.Black", to: "$.Black.content"},
+        {from: "totModel.Silver", to: "$.Silver.content"},
+        {from: "totModel.White", to: "$.White.content"},
+        {from: "totModel.Blue", to: "$.Blue.content"}
+    ]
+});
+
